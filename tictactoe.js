@@ -2,7 +2,7 @@ const player = (sign) => {
     this.sign = sign;
 
     let getSign = () => {
-        return this.sign;
+        return sign;
     }
 
     return { getSign }
@@ -26,37 +26,44 @@ const board = (() => {
             array[i] = ''
         }
     }
-    console.log(array)
 
     return {changePos, getPos, clearBoard}
 })()
 
 const gameFunctions = (() => {
     let box = document.querySelectorAll('.box')
-
-    let restart = document.getElementById('restart').addEventListener('click', () => {
+    let restart = document.getElementById('restart')
+    
+    restart.addEventListener('click', () => {
         board.clearBoard();
-        gameFunctions.reset();
-        setMessage()
+        gameOperations.reset();
+        setMessage('X')
     })
 
     box.forEach(boxes => {
         boxes.addEventListener('click', (e) => {
             let index = e.currentTarget.getAttribute('data-index')
-            if(index.textContent !== '') return;
-            index = Number(index)
-            gameOperations.playRound(Number(index))
+            let num = Number(index)
+            if(gameOperations.getIsOver() || box[num].textContent != ''){
+                return
+            }
+            gameOperations.playRound(num)
             showCurBoard();
         })
     })
 
     let showCurBoard = () => {
+        if(restart.onclick = () => {
+            for(let i = 0; i < 9; i++)
+                box[i].textContent = ''
+        })
+
         for (let i = 0; i < 9; i++) {
             box[i].textContent = board.getPos(i);
         }
     }
-    let header = document.querySelector('.curPlayer')
 
+    let header = document.querySelector('.curPlayer')
     let setWinnerMessage = (winner) => {
         if (winner == 'Draw') {
             header.textContent = "It's a tie!"
@@ -64,9 +71,10 @@ const gameFunctions = (() => {
         else header.textContent = `Player ${winner} has won!`
     }
 
-    let setMessage = (player) => {
-        header.textContent = `Player ${player.getSign()}'s turn`
+    let setMessage = (sign) => {
+        header.textContent = `Player ${sign}'s turn`
     }
+
     return {setMessage, setWinnerMessage}
 })()
 
@@ -78,49 +86,57 @@ const gameOperations = (() => {
     let gameOver = false
 
     let playRound = (index) => {
-        console.log(index)
-        if(checkGameOver()){
-            messageFunctions.setMessage()
+        gameFunctions.setMessage(getTurn())
+        board.changePos(getTurn(), index)
+
+        if(checkGameOver(index)){
+            gameFunctions.setWinnerMessage(getTurn())
+            gameOver = true
+            return
         }
-        let player = getTurn(round)
-        board.changePos(player.getSign(), index)
-        round++
-    }
 
-    let getTurn = (round) => {
-        return round % 2 ? p1 : p2;
-    }
-
-    const winConditions = [
-        [0, 1, 2],
-        [4, 5, 6],
-        [7, 8, 9],
-        [0, 4, 7],
-        [1, 5, 8],
-        [2, 6, 9],
-        [0, 5, 9],
-        [2, 5, 7]
-    ]
-
-    let checkGameOver = () => {
         if(round == 9){
             gameOver = true
-            messageFunctions.setMessage('Draw')
+            gameFunctions.setMessage('Draw')
+            return
         }
-        if(winConditions){
-            
-        }
+        round++
+    }   
+
+    let getTurn = () => {
+        return round % 2 ? p1.getSign() : p2.getSign();
     }
 
-    let winner = (winner) => {
-        if (winner) {
-            messageFunctions.setMessage(winner)
-        }
+    let checkGameOver = (fieldIndex) => {
+        
+        const winConditions = [
+            [0, 1, 2],
+            [3, 4, 5],
+            [6, 7, 8],
+            [0, 3, 6],
+            [1, 4, 7],
+            [2, 5, 8],
+            [0, 4, 8],
+            [2, 4, 6],
+        ]
+
+        let res = winConditions
+        .filter((combinations) => combinations
+        .includes(fieldIndex))
+        .some((combinations) => combinations
+        .every((index) => board.getPos(index) === getTurn()))
+        
+        return res
+    }
+
+    let getIsOver = () => {
+        return gameOver
     }
 
     let reset = () => {
         round = 1
         gameOver = false
     }
-    return {playRound, reset}
+
+    return {playRound, reset, getIsOver}
 })()
