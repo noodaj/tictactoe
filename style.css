@@ -1,0 +1,19 @@
+:root{
+    --grid-row: 1;
+    --grid-col: 1;
+}
+
+.board{
+    display: grid;
+    max-width: 50%;
+    height: 100%;
+    grid-template-columns: 150px 150px 150px;
+    grid-template-rows: 150px 150px 150px;
+}
+
+.box{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid black;
+}
