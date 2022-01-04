@@ -64,6 +64,7 @@ const gameFunctions = (() => {
     }
 
     let header = document.querySelector('.curPlayer')
+    
     let setWinnerMessage = (winner) => {
         if (winner == 'Draw') {
             header.textContent = "It's a tie!"
@@ -72,7 +73,7 @@ const gameFunctions = (() => {
     }
 
     let setMessage = (sign) => {
-        header.textContent = `Player ${sign}'s turn`
+        header.textContent = `Player ${sign} 's turn`
     }
 
     return {setMessage, setWinnerMessage}
@@ -97,7 +98,7 @@ const gameOperations = (() => {
 
         if(round == 9){
             gameOver = true
-            gameFunctions.setMessage('Draw')
+            gameFunctions.setWinnerMessage('Draw')
             return
         }
         round++
